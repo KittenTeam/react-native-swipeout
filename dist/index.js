@@ -43,7 +43,7 @@ var SwipeoutBtn = (0, _createReactClass2.default)({
     color: _propTypes2.default.string,
     component: _propTypes2.default.node,
     onPress: _propTypes2.default.func,
-    text: _propTypes2.default.string,
+    text: _propTypes2.default.node,
     type: _propTypes2.default.string,
     underlayColor: _propTypes2.default.string
   },
@@ -159,13 +159,19 @@ var Swipeout = (0, _createReactClass2.default)({
 
     this._panResponder = _reactNative.PanResponder.create({
       onStartShouldSetPanResponder: function onStartShouldSetPanResponder(event, gestureState) {
-        return true;
+        return false;
       },
       onStartShouldSetPanResponderCapture: function onStartShouldSetPanResponderCapture(event, gestureState) {
         return _this.state.openedLeft || _this.state.openedRight;
       },
       onMoveShouldSetPanResponderCapture: function onMoveShouldSetPanResponderCapture(event, gestureState) {
-        return Math.abs(gestureState.dx) > _this.props.sensitivity && Math.abs(gestureState.dy) <= _this.props.sensitivity;
+        // Math.abs(gestureState.dx) > this.props.sensitivity &&
+        // Math.abs(gestureState.dy) <= this.props.sensitivity,
+        var vx = Math.abs(gestureState.vx);
+        var vy = Math.abs(gestureState.vy);
+        var sensitivity = _this.props.sensitivity || 1.5;
+        var should_open_while_move = vx > vy * sensitivity;
+        return should_open_while_move;
       },
       onPanResponderGrant: this._handlePanResponderGrant,
       onPanResponderMove: this._handlePanResponderMove,
@@ -338,9 +344,11 @@ var Swipeout = (0, _createReactClass2.default)({
     var _this3 = this;
 
     this.refs.swipeoutContent.measure(function (ox, oy, width, height) {
+      var btnWidth = _this3.props.buttonWidth || width / 5;
+
       _this3.setState({
-        btnWidth: width / 5,
-        btnsRightWidth: _this3.props.right ? width / 5 * _this3.props.right.length : 0
+        btnWidth: btnWidth,
+        btnsRightWidth: _this3.props.right ? btnWidth * _this3.props.right.length : 0
       }, function () {
         _this3._tweenContent('contentPos', -_this3.state.btnsRightWidth);
         _this3._callOnOpen();
@@ -358,9 +366,11 @@ var Swipeout = (0, _createReactClass2.default)({
     var _this4 = this;
 
     this.refs.swipeoutContent.measure(function (ox, oy, width, height) {
+      var btnWidth = _this4.props.buttonWidth || width / 5;
+
       _this4.setState({
-        btnWidth: width / 5,
-        btnsLeftWidth: _this4.props.left ? width / 5 * _this4.props.left.length : 0
+        btnWidth: btnWidth,
+        btnsLeftWidth: _this4.props.left ? btnWidth * _this4.props.left.length : 0
       }, function () {
         _this4._tweenContent('contentPos', _this4.state.btnsLeftWidth);
         _this4._callOnOpen();
