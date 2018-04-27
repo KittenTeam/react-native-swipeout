@@ -169,8 +169,9 @@ var Swipeout = (0, _createReactClass2.default)({
         // Math.abs(gestureState.dy) <= this.props.sensitivity,
         var vx = Math.abs(gestureState.vx);
         var vy = Math.abs(gestureState.vy);
+        var dx = Math.abs(gestureState.dx);
         var sensitivity = _this.props.sensitivity || 1.5;
-        var should_open_while_move = vx > vy * sensitivity;
+        var should_open_while_move = vx > vy * sensitivity && dx > 10;
         return should_open_while_move;
       },
       onPanResponderGrant: this._handlePanResponderGrant,
